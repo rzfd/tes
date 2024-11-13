@@ -1,20 +1,35 @@
 pipeline {
-    agent { dockerfile true }
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "myapp:latest" 
+    }
+
     stages {
-        stage('Build') {
+        stage('Clone Repository') {
             steps {
-                sh 'go build'
+                git 'https://github.com/rzfd/tes.git' 
             }
         }
-        stage('Test') {
+        stage('Build Docker Image') {
             steps {
-                sh 'go --version'
+                script {
+                    docker.build(DOCKER_IMAGE)
+                }
             }
         }
-        stage('Deploy') {
+        stage('Run Docker Container') {
             steps {
-                echo 'Deploying....'
+                script {
+                    docker.image(DOCKER_IMAGE).run('-p 8080:8080')
+                }
             }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
         }
     }
 }
