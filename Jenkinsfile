@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/rzfd/tes.git'
+                git branch: 'main', url: 'https://github.com/rzfd/tes.git'
             }
         }
         stage('Build Docker Image') {
