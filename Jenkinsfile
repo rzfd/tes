@@ -26,26 +26,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            cleanWs()
-            script {
-                // Clean up Docker containers and images to ensure a clean environment
-                def containers = docker.ps('--filter ancestor=' + DOCKER_IMAGE).trim().split('\n')
-                if (containers.size() > 1) {
-                    for (int i = 1; i < containers.size(); i++) {
-                        docker.command("stop ${containers[i]}")
-                        docker.command("rm ${containers[i]}")
-                    }
-                }
-                def images = docker.images(DOCKER_IMAGE).trim().split('\n')
-                if (images.size() > 1) {
-                    for (int i = 1; i < images.size(); i++) {
-                        docker.command("rmi ${images[i]}")
-                    }
-                }
-            }
-        }
-    }
 }
