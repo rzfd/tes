@@ -8,19 +8,13 @@ pipeline {
     
     stages {
         stage('Checkout') {
-            when {
-                branch 'main'  // Ensures the pipeline runs only for the main branch
-            }
             steps {
                 // Checkout your code from version control
-                git 'https://your-repository-url.git'
+                git branch: 'main', url: 'https://github.com/rzfd/tes.git'
             }
         }
         
         stage('Build Docker Image') {
-            when {
-                branch 'main'  // Build the image only for the main branch
-            }
             steps {
                 script {
                     docker.build(DOCKER_IMAGE)
@@ -29,9 +23,6 @@ pipeline {
         }
         
         stage('Run Containers') {
-            when {
-                branch 'main'  // Run containers only for the main branch
-            }
             steps {
                 script {
                     // Use docker-compose to start services
@@ -41,14 +32,9 @@ pipeline {
         }
         
         stage('Run Tests') {
-            when {
-                branch 'main'  // Run tests only for the main branch
-            }
             steps {
                 script {
-                    // Add any test commands you need to run
-                    // For example:
-                    // sh 'docker exec my-go-app-container go test ./...'
+                    sh 'docker --version'
                 }
             }
         }
