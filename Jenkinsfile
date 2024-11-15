@@ -1,5 +1,10 @@
 pipeline {
-    agent { dockerfile true }
+    agent {
+        dockerfile {
+            filename 'Dockerfile'
+            dir '.'
+        }
+    }
 
     environment {
         DOCKER_IMAGE = "myapp:latest"
@@ -9,6 +14,11 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/rzfd/tes.git'
+            }
+        }
+        stage('Check Docker Version') {
+            steps {
+                sh 'docker --version'
             }
         }
         stage('Build Docker Image') {
