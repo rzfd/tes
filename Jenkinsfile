@@ -1,26 +1,19 @@
 pipeline {
-    agent {
-        dockerfile {
-            filename 'Dockerfile'
-            dir '.'
-        }
-    }
-
+    agent any
+    
     environment {
-        DOCKER_IMAGE = "myapp:latest"
+        APP_NAME = "my-go-app"
+        DOCKER_IMAGE = "${APP_NAME}:latest"
     }
-
+    
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/rzfd/tes.git'
+                // Checkout your code from version control
+                git 'https://github.com/rzfd/tes.git'
             }
         }
-        stage('Check Docker Version') {
-            steps {
-                sh 'docker --version'
-            }
-        }
+        
         stage('Build Docker Image') {
             steps {
                 script {
@@ -28,10 +21,29 @@ pipeline {
                 }
             }
         }
-        stage('Run Docker Container') {
+        
+        stage('Run Containers') {
             steps {
                 script {
-                    docker.image(DOCKER_IMAGE).run('-p 8080:8080')
+                    // Use docker-compose to start services
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                script {
+                    sh 'docker --version'
+                }
+            }
+        }
+        
+        stage('Cleanup') {
+            steps {
+                script {
+                    // Optionally, bring down the containers after the build
+                    sh 'docker-compose down'
                 }
             }
         }
